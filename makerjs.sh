@@ -8,11 +8,44 @@ function help() {
     echo "Usage: makerjs.sh <options> <filename>"
     echo "Options:"
     echo "  -h, --help      Display this help message"
-    echo "  -p, --project   Create a new react project"
     echo "  -c, --component <component-name>  Create a new react component"
-    echo "  -t, --template <template-name>    Create a new html template"
+    echo "  -f, --standard  <standard-name>   Create a new react standalone file"
+    echo "  -p, --project   <project name>    Create a new react project"
+    echo "  -t, --template  <template-name>   Create a new html template"
     echo "  -s, --style <style-name>          Create a new css stylesheet"
     exit 0
+}
+
+function create_jsx_file() {
+    local file="${1}"
+    local filename="${file%.*}"
+    echo " const Greet = ({ name }) => <hl>Hello {name}!</hl>;
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<Greet name-"Reader" />);" > "${filename}.jsx"
+    echo "Created file: ${filename}"
+}
+
+function create_html_file() {
+    local file="${1}"
+    local filename="${file%.*}"
+    echo "
+    <!DOCTYPE html>
+    <html lang=\"en\">
+        <head>
+            <meta charset=\”UTF-8\">
+            <title>Hello Reactjs!</title>
+            <script src=\"https://unpkg.com/react@18/umd/react.development.js\" crossorigin></script>
+            <script src=\"https://unpkg.com/react-dom@18/umd/react-dom.development.js\" crossorigin></script>
+            <script src=\"https://unpkg.com/babel-standalone@6/babel.min.js\"></script>
+            <script src=\"${filename}.jsx\" type=\"text/babel\"></script>
+        </head>
+        <body>
+            <div id=\"root\"></div>
+        </body>
+    </html>
+    " > "${filename}.html"
+    echo "Created file: ${filename}"
 }
 
 if [[ "$#" -ne 2 ]]; then
@@ -25,6 +58,7 @@ for arg in "$@"; do
         --help) set -- "$@" "-h" ;;
         --component) set -- "$@" "-c" ;;
         --delete) set -- "$@" "-d" ;;
+        --file) set -- "$@" "-f" ;;
         --project) set -- "$@" "-p" ;;
         --template) set -- "$@" "-t" ;;
         --style) set -- "$@" "-s" ;;
@@ -32,7 +66,7 @@ for arg in "$@"; do
     esac
 done
 
-options="hc:d:t:s:p:"
+options="hc:d:f:t:s:p:"
 while getopts "${options}" opt; do
     case "${opt}" in
         h) help ;;
@@ -53,6 +87,18 @@ while getopts "${options}" opt; do
            rm -rf ${OPTARG}
            exit 0
            ;;
+        f)
+            filename="${OPTARG}"
+            mkdir "${filename}" && cd "${filename}"
+            create_html_file "${filename}"
+            create_jsx_file "${filename}"
+            # install local http-server
+            npm init -y
+            npm install http-server
+            # start the local server
+            node_modules/.bin/http-server
+            exit 0
+            ;;
         t) echo "Creating template: ${OPTARG}" ;;
         s) echo "Creating style: ${OPTARG}" ;;
         p) echo "Creating project: ${OPTARG}"
