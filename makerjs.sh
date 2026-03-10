@@ -31,7 +31,7 @@ function create_jsx_file() {
     echo " const Greet = ({ name }) => <hl>Hello {name}!</hl>;
     const rootElement = document.getElementById('root');
     const root = ReactDOM.createRoot(rootElement);
-    root.render(<Greet name-"Reader" />);" > "${filename}.jsx"
+    root.render(<Greet name=\"Reader\" />);" > "${filename}.jsx"
     echo "Created file: ${filename}"
 }
 
