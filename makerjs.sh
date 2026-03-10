@@ -17,3 +17,24 @@ function help() {
 if [[ "$#" -ne 2 ]]; then
     help
 fi
+
+for arg in "$@"; do
+    shift
+    case "${arg}" in
+        --help) set -- "$@" "-h" ;;
+        --component) set -- "$@" "-c" ;;
+        --template) set -- "$@" "-t" ;;
+        --style) set -- "$@" "-s" ;;
+        *) set -- "$@" "${arg}" ;;
+    esac
+done
+
+options="hc:t:s:"
+while getopts "${options}" opt; do
+    case "${opt}" in
+        h) help ;;
+        c) echo "Creating component: ${OPTARG}" ;;
+        t) echo "Creating template: ${OPTARG}" ;;
+        s) echo "Creating style: ${OPTARG}" ;;
+    esac
+done
