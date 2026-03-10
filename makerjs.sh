@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 # author:      omitida
 # date:        09/03/26
 # description: Create react components, html templates, and css stylesheets
@@ -13,3 +13,7 @@ function help() {
     echo "  -s, --style <style-name>          Create a new css stylesheet"
     exit 0
 }
+
+if [[ "$#" -ne 2 ]]; then
+    help
+fi
