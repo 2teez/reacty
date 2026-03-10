@@ -13,6 +13,7 @@ function help() {
     echo "  -p, --project   <project name>    Create a new react project"
     echo "  -t, --template  <template-name>   Create a new html template"
     echo "  -s, --style <style-name>          Create a new css stylesheet"
+    echo "  -r, --run       <directory>       Run the react project"
     exit 0
 }
 
@@ -73,11 +74,12 @@ for arg in "$@"; do
         --project) set -- "$@" "-p" ;;
         --template) set -- "$@" "-t" ;;
         --style) set -- "$@" "-s" ;;
+        --run) set -- "$@" "-r" ;;
         *) set -- "$@" "${arg}" ;;
     esac
 done
 
-options="hc:d:f:t:s:p:"
+options="hc:d:f:t:s:p:r:"
 while getopts "${options}" opt; do
     case "${opt}" in
         h) help ;;
@@ -101,8 +103,12 @@ while getopts "${options}" opt; do
         f)
             filename="${OPTARG}"
             mkdir "${filename}" && cd "${filename}"
-            create_html_file "${filename}"
-            create_jsx_file "${filename}"
+            mkdir src public
+            create_html_file "index.html"
+            mv index.html public/
+            create_jsx_file "index.jsx"
+            mv index.jsx src/
+            touch src/App.jsx
             # install local http-server
             npm init -y > /dev/null
             npm install http-server
@@ -112,6 +118,11 @@ while getopts "${options}" opt; do
             ;;
         t) echo "Creating template: ${OPTARG}" ;;
         s) echo "Creating style: ${OPTARG}" ;;
+        r) echo "Running project: ${OPTARG}"
+           cd ${OPTARG}
+           node_modules/.bin/http-server
+           exit 0
+           ;;
         p) echo "Creating project: ${OPTARG}"
            npm init react-app ${OPTARG} --template typescript
            cd ${OPTARG}
