@@ -16,8 +16,17 @@ function help() {
     exit 0
 }
 
+function check_file_exists() {
+    if [[ -e "${filename}" ]]; then
+        echo "File already exists: ${filename}! Can't overwrite."
+        exit 1
+    fi
+}
+
 function create_jsx_file() {
     local file="${1}"
+    check_file_exists "${file}"
+
     local filename="${file%.*}"
     echo " const Greet = ({ name }) => <hl>Hello {name}!</hl>;
     const rootElement = document.getElementById('root');
@@ -28,6 +37,8 @@ function create_jsx_file() {
 
 function create_html_file() {
     local file="${1}"
+    check_file_exists "${file}"
+
     local filename="${file%.*}"
     echo "
     <!DOCTYPE html>
@@ -93,7 +104,7 @@ while getopts "${options}" opt; do
             create_html_file "${filename}"
             create_jsx_file "${filename}"
             # install local http-server
-            npm init -y
+            npm init -y > /dev/null
             npm install http-server
             # start the local server
             node_modules/.bin/http-server
