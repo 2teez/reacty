@@ -1,3 +1,5 @@
+import "./BookList.css";
+
 function BookList() {
   return (
     <table>
