@@ -104,7 +104,6 @@ while getopts "${options}" opt; do
             filename="${OPTARG}"
             mkdir "${filename}" && cd "${filename}"
             mkdir src public
-            create_html_file "index.html"
             mv index.html public/
             create_jsx_file "index.jsx"
             mv index.jsx src/
